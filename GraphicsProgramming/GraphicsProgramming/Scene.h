@@ -15,12 +15,26 @@
 // Further includes should go here:
 #include "SOIL.h"
 #include <vector>
+#include "Vector3.h"
 
 
-class Scene{
+struct Vertex
+{
+	Vector3 position;
+	Vector3 color;
+
+	Vertex() {}
+	Vertex(Vector3 pos, Vector3 cl)
+	{
+		position = pos;
+		color = cl;
+	}
+};
+
+class Scene {
 
 public:
-	Scene(Input *in);
+	Scene(Input* in);
 	// Main render function
 	void render();
 	// Handle input function that receives delta time from parent.
@@ -29,6 +43,7 @@ public:
 	void update(float dt);
 	// Resizes the OpenGL output based on new window size.
 	void resize(int w, int h);
+
 
 protected:
 	// configure opengl render pipeline
@@ -39,12 +54,62 @@ protected:
 	void renderTextOutput();
 	void calculateFPS();
 
-	// draw primitive functions
-	
-
 	// For access to user input.
 	Input* input;
-		
+
+	bool wireframeMode;
+
+	void drawTriangleStrip(std::vector<Vertex> vertices) {
+		glBegin(GL_TRIANGLE_STRIP);
+		for (const auto& vertex : vertices) {
+			glColor3f(vertex.color.x, vertex.color.y, vertex.color.z);
+			glVertex3f(vertex.position.x, vertex.position.y, vertex.position.z);
+		}
+		glEnd();
+	}
+
+	void Scene::drawTriangleFan(std::vector<Vertex> vertices) {
+		glBegin(GL_TRIANGLE_FAN); // Start drawing a triangle fan
+		for (const auto& vertex : vertices) {
+			glColor3f(vertex.color.x, vertex.color.y, vertex.color.z); // Set color for the vertex
+			glVertex3f(vertex.position.x, vertex.position.y, vertex.position.z); // Set position for the vertex
+		}
+		glEnd(); // End drawing
+	}
+
+	void Scene::drawQuad(Vertex v1, Vertex v2, Vertex v3, Vertex v4) {
+		glBegin(GL_QUADS); // Start drawing a quad
+		glColor3f(v1.color.x, v1.color.y, v1.color.z); // Set color for vertex 1
+		glVertex3f(v1.position.x, v1.position.y, v1.position.z); // Set position for vertex 1
+
+		glColor3f(v2.color.x, v2.color.y, v2.color.z); // Set color for vertex 2
+		glVertex3f(v2.position.x, v2.position.y, v2.position.z); // Set position for vertex 2
+
+		glColor3f(v3.color.x, v3.color.y, v3.color.z); // Set color for vertex 3
+		glVertex3f(v3.position.x, v3.position.y, v3.position.z); // Set position for vertex 3
+
+		glColor3f(v4.color.x, v4.color.y, v4.color.z); // Set color for vertex 4
+		glVertex3f(v4.position.x, v4.position.y, v4.position.z); // Set position for vertex 4
+		glEnd(); // End drawing
+	}
+
+	//void Scene::drawQuad(Vertex v1, Vertex v2, Vertex v3, Vertex v4) {
+	//	// Draw the first triangle
+	//	//drawTriangle(v1, v2, v3);
+
+	//	// Draw the second triangle
+	//	//drawTriangle(v1, v4, v3);
+	//}
+
+	void Scene::drawPolygon(const std::vector<Vertex>& vertices) {
+		glBegin(GL_POLYGON); // Start drawing a polygon
+		for (const auto& vertex : vertices) {
+			glColor3f(vertex.color.x, vertex.color.y, vertex.color.z); // Set color for the vertex
+			glVertex3f(vertex.position.x, vertex.position.y, vertex.position.z); // Set position for the vertex
+		}
+		glEnd(); // End drawing
+	}
+
 	// For Window and frustum calculation.
 	int width, height;
 	float fov, nearPlane, farPlane;
@@ -55,5 +120,7 @@ protected:
 	char mouseText[40];
 
 };
+
+
 
 #endif
