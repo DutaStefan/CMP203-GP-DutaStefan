@@ -9,11 +9,11 @@
 #include "glut.h"
 #include <gl/GL.h>
 #include <gl/GLU.h>
-#include "Scene.h"
+#include "SolarScene.h"
 #include "Input.h"
 
 // Required variables; pointer to scene and input objects. Initialise variable used in delta time calculation.
-Scene* scene;
+SolarScene* scene;
 Input* input;
 int oldTimeSinceStart = 0;
 
@@ -28,7 +28,7 @@ void changeSize(int w, int h)
 // Called as part of the GLUT main loop.
 // Calculates delta time (the time between frames, in seconds)
 // Calls Scene update and render for the next frame.
-void renderScene(void) 
+void renderSolarScene(void) 
 {
 	// Calculate delta time.
 	int timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
@@ -153,9 +153,9 @@ int main(int argc, char **argv)
 	glutCreateWindow("My first triangle");
 	
 	// Register callback functions for change in size and rendering.
-	glutDisplayFunc(renderScene);
+	glutDisplayFunc(renderSolarScene);
 	glutReshapeFunc(changeSize);
-	glutIdleFunc(renderScene);
+	glutIdleFunc(renderSolarScene);
 
 	// Register Input callback functions.
 	glutKeyboardFunc(processNormalKeys);
@@ -177,7 +177,7 @@ int main(int argc, char **argv)
 
 	// Initialise input and scene objects.
 	input = new Input();
-	scene = new Scene(input);
+	scene = new SolarScene(input);
 	
 	// Enter GLUT event processing cycle
 	glutMainLoop();
